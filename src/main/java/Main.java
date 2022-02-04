@@ -27,53 +27,62 @@ public class Main {
 
 
         String loginMenu = " 1 : CUSTOMER LOGIN \n 2 : ADMIN LOGIN \n 3 : CUSTOMER SIGN UP \n 4 : EXIT \n ENTER NUMBER :";
-        Boolean state = true;try {
-            while (state){
-                System.out.println("------------------------------------------------------");
-                System.out.print(loginMenu);
-                int n = getNumber();
-                switch (n){
-                    case 1 :
-                        System.out.print(" ENTER YOUR USERNAME : ");
-                        String userName = scanner.nextLine();
-                        System.out.print(" ENTER YOUR PASSWORD : ");
-                        String passWord =  scanner.nextLine();
-                        customerPage(customerService.login(userName,passWord));
-                        break;
-                    case 2 :
-                        System.out.print(" ENTER YOUR USERNAME : ");
-                        String user = scanner.nextLine();
-                        System.out.print(" ENTER YOUR PASSWORD : ");
-                        String pass =  scanner.nextLine();
-                        adminPage(adminService.login(user,pass));
-                        break;
-                    case 3 :
-                        System.out.print(" ENTER YOUR USERNAME : ");
-                        String u = scanner.nextLine();
-                        System.out.print(" ENTER YOUR PASSWORD : ");
-                        String p =  scanner.nextLine();
-                        System.out.print(" ENTER YOUR ADDRESS : ");
-                        String address = scanner.nextLine();
-                        customerService.save(new Customer(0,u,p,address));
-                        break;
-                    case 4 :
-                        System.out.println(" BAY ...");
-                        state = false;
-                        break;
+        Boolean state = true;
+
+            while (state) {
+                try {
+                    System.out.println("------------------------------------------------------");
+                    System.out.print(loginMenu);
+                    int n = getNumber();
+                    switch (n) {
+                        case 1:
+                            System.out.print(" ENTER YOUR USERNAME : ");
+                            String userName = scanner.nextLine();
+                            System.out.print(" ENTER YOUR PASSWORD : ");
+                            String passWord = scanner.nextLine();
+                            Customer customer = customerService.login(userName, passWord);
+                            if(customer == null){
+                                throw new NotFoundException("wrong username password");
+                            }
+                            customerPage(customer);
+                            break;
+                        case 2:
+                            System.out.print(" ENTER YOUR USERNAME : ");
+                            String user = scanner.nextLine();
+                            System.out.print(" ENTER YOUR PASSWORD : ");
+                            String pass = scanner.nextLine();
+                             Admin admin= adminService.login(user, pass);
+                            if(admin == null){
+                                throw new NotFoundException("wrong username password");
+                            }
+                            adminPage(admin);
+                            break;
+                        case 3:
+                            System.out.print(" ENTER YOUR USERNAME : ");
+                            String u = scanner.nextLine();
+                            System.out.print(" ENTER YOUR PASSWORD : ");
+                            String p = scanner.nextLine();
+                            System.out.print(" ENTER YOUR ADDRESS : ");
+                            String address = scanner.nextLine();
+                            customerService.save(new Customer(0, u, p, address));
+                            break;
+                        case 4:
+                            System.out.println(" BAY ...");
+                            state = false;
+                            break;
+                    }
+                } catch (InvalidValueEntered e) {
+                    System.out.println(e.getMessage());
+                } catch (ConnectionException e) {
+                    System.out.println(e.getMessage());
+                } catch (InvalidNationalCodeException e) {
+                    System.out.println(e.getMessage());
+                } catch (NotFoundException e) {
+                    System.out.println(e.getMessage());
+                } catch (SaveException e) {
+                    System.out.println(e.getMessage());
                 }
             }
-        }catch (InvalidValueEntered e){
-            System.out.println(e.getMessage());
-        }catch (ConnectionException e){
-            System.out.println(e.getMessage());
-        }catch (InvalidNationalCodeException e){
-            System.out.println(e.getMessage());
-        }catch (NotFoundException e){
-            System.out.println(e.getMessage());
-        }catch (SaveException e){
-            System.out.println(e.getMessage());
-        }
-
         try {
             MyConnection.getConnection().close();
         } catch (SQLException e) {
